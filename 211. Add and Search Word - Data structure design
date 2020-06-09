@@ -1,0 +1,148 @@
+#include<cstdio>
+#include<iostream>
+using namespace std;
+
+static const int SIZE = 26;
+
+class TrieNode
+{
+	
+public:
+	TrieNode();
+
+	TrieNode *child[SIZE];
+	bool isEnd;
+
+};
+
+TrieNode::TrieNode()
+{
+	isEnd = false;
+	for (int i = 0; i < SIZE; i++)
+	{
+		child[i] = NULL;
+	}
+}
+
+
+class Trie
+{
+public:
+	Trie();
+	//~Trie();
+	void insert(string str);
+	bool search(string str, int start, TrieNode *node);
+	//bool startsWith(string str);
+	TrieNode *root;
+private:
+	
+};
+
+Trie::Trie()
+{
+	root = new TrieNode();
+}
+
+void Trie::insert(string str)
+{
+	TrieNode *temp = root;
+	for (char c : str)
+	{
+		int index = c - 'a';
+		if (temp->child[index] == NULL)
+		{
+			temp->child[index] = new TrieNode();
+		}
+		temp = temp->child[index];
+	}
+	temp->isEnd = true;
+}
+
+bool Trie::search(string str, int start, TrieNode *node)
+{
+	TrieNode *temp = node;
+	for (int i=start;i<str.length(); i++)
+	{
+		if (str[i] != '.')
+		{
+			int index = str[i] - 'a';
+			if (temp->child[index] == NULL)
+			{
+				return false;
+			}
+			temp = temp->child[index];
+		}
+		else
+		{
+			for (int j = 0; j < SIZE; j++)
+			{
+				if (temp->child[j] != NULL)
+				{
+					if (search(str, i + 1, temp->child[j]))
+						return true;
+				}
+			}
+			return false;
+		}
+	}
+	if (temp != NULL && temp->isEnd == true)
+		return true;
+	return false;
+}
+
+
+
+class WordDictionary {
+private:
+	Trie trie;
+public:
+	/** Initialize your data structure here. */
+
+	WordDictionary() {
+		trie = Trie();
+	}
+
+	/** Adds a word into the data structure. */
+	void addWord(string word) {
+		trie.insert(word);
+	}
+
+	/** Returns if the word is in the data structure. A word could contain the dot character '.' to represent any one letter. */
+	bool search(string word) {
+		return trie.search(word,0, trie.root);
+	}
+};
+
+//Driver code
+/*
+int main()
+{
+	WordDictionary wd = WordDictionary();
+	wd.addWord("a");
+	wd.addWord("a");
+	if (wd.search("."))
+		cout << "yes" << endl;
+	else
+		cout << "no" << endl;
+	if (wd.search("a"))
+		cout << "yes" << endl;
+	else
+		cout << "no" << endl;
+	if (wd.search("aa"))
+		cout << "yes" << endl;
+	else
+		cout << "no" << endl;
+	if (wd.search("a"))
+		cout << "yes" << endl;
+	else
+		cout << "no" << endl;
+	if (wd.search(".a"))
+		cout << "yes" << endl;
+	else
+		cout << "no" << endl;
+	if (wd.search("a."))
+		cout << "yes" << endl;
+	else
+		cout << "no" << endl;
+}
+*/
