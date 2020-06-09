@@ -88,6 +88,7 @@ bool Trie::startsWith(string str)
 }
 
 //Driver code to check
+/*
 int main()
 {
 	Trie trie = Trie();
@@ -113,3 +114,4 @@ int main()
 	else
 		cout << "No" << endl;
 }
+*/
