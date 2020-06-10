@@ -1,0 +1,122 @@
+#include<cstdio>
+#include<iostream>
+#include<vector>
+using namespace std;
+
+static const int SIZE = 26;
+static string prefix;
+
+class TrieNode
+{
+	
+public:
+	TrieNode();
+
+	TrieNode *child[SIZE];
+	bool isEnd;
+
+};
+
+TrieNode::TrieNode()
+{
+	isEnd = false;
+	for (int i = 0; i < SIZE; i++)
+	{
+		child[i] = NULL;
+	}
+}
+
+
+class Trie
+{
+public:
+	Trie();
+	//~Trie();
+	void insert(string str);
+	bool search(string str);
+	//bool startsWith(string str);
+	TrieNode *root;
+private:
+	
+};
+
+Trie::Trie()
+{
+	root = new TrieNode();
+}
+
+void Trie::insert(string str)
+{
+	TrieNode *temp = root;
+	for (char c : str)
+	{
+		int index = c - 'a';
+		if (temp->child[index] == NULL)
+		{
+			temp->child[index] = new TrieNode();
+		}
+		temp = temp->child[index];
+	}
+	temp->isEnd = true;
+}
+
+bool Trie::search(string str)
+{
+	prefix = "";
+	TrieNode *temp = root;
+	for (char c : str)
+	{
+		int index = c - 'a';
+		if (temp->child[index] == NULL)
+		{
+			return false;
+		}
+		prefix += c;
+		temp = temp->child[index];
+		if (temp->isEnd)
+			return true;
+	}
+	if (temp != NULL && temp->isEnd == true)
+		return true;
+	return false;
+}
+
+class Solution {
+public:
+	string replaceWords(vector<string>& dict, string sentence) {
+		Trie trie = Trie();
+		for (string str : dict)
+		{
+			trie.insert(str);
+		}
+		string word="", result_sentence="";
+		for (auto x : sentence)
+		{
+			if (x == ' ')
+			{
+				if (trie.search(word))
+				{
+					result_sentence += prefix + " ";
+				}
+				else
+				{
+					result_sentence += word + " ";
+				}
+				word = "";
+			}
+			else
+			{
+				word += x;
+			}
+		}
+		if (trie.search(word))
+		{
+			result_sentence += prefix;
+		}
+		else
+		{
+			result_sentence += word;
+		}
+		return result_sentence;
+	}
+};
