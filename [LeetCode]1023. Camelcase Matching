@@ -4,7 +4,7 @@
 #include<algorithm>
 using namespace std;
 
-static const int SIZE = 52;
+static const int SIZE = 58;
 
 class TrieNode
 {
@@ -32,8 +32,8 @@ class Trie
 public:
 	Trie();
 	//~Trie();
-	bool insert(string str, string ptrn);
-	//bool startsWith(string str);
+	void insert(string str);
+	bool patternMatch(string str);
 	TrieNode *root;
 private:
 	
@@ -44,23 +44,12 @@ Trie::Trie()
 	root = new TrieNode();
 }
 
-bool Trie::insert(string str, string ptrn)
+void Trie::insert(string str)
 {
 	TrieNode *temp = root;
-	int j = 0;
-	bool match = true;
 	for (char c: str)
 	{
-		if (c == ptrn[j])
-			j++;
-		else if (c >= 'A'&&c <= 'Z')
-			match = false;
-
-		int index;
-		if (c >= 'a' && c <= 'z')
-			index = c - 'a';
-		else
-			index = c - 'A' + 26;
+		int index = c - 'A';
 		if (temp->child[index] == NULL)
 		{
 			temp->child[index] = new TrieNode();
@@ -68,7 +57,28 @@ bool Trie::insert(string str, string ptrn)
 		temp = temp->child[index];
 	}
 	temp->isEnd = true;
-	return j == ptrn.length() && match;
+}
+
+bool Trie::patternMatch(string str)
+{
+	TrieNode *temp = root;
+	for (char c : str)
+	{
+		int index = c - 'A';
+
+		if (index >= 0 && index < 26)
+		{
+			if (temp->child[index] == NULL)
+				return false;
+		}
+		else
+		{
+			if (temp->child[index] == NULL)
+				continue;
+		}
+		temp = temp->child[index];
+	}
+	return temp->isEnd;
 }
 
 
@@ -78,9 +88,10 @@ public:
 	vector<bool> camelMatch(vector<string>& queries, string pattern) {
 		vector<bool>result;
 		Trie trie = Trie();
+		trie.insert(pattern);
 		for (int i = 0; i < queries.size(); i++)
 		{
-			result.push_back(trie.insert(queries[i], pattern));
+			result.push_back(trie.patternMatch(queries[i]));
 		}
 		return result;
 	}
